@@ -1,5 +1,6 @@
 # MLflow-JS
-Is a free open-source software developed by Kyler Chiago, Austin Fraser, Staphanie Ho, Winston Ludlam, and Yiqun Zheng. This software is designed to help users track and manage their machine learning models. It is a web-based application that allows users to log their models, parameters, and metrics. Users can also compare models and share their results with others. MLflow-JS is built on top of MLflow, an open-source platform developed by Databricks. MLflow-JS is designed to be easy to use and flexible, allowing users to customize their workflows to suit their needs. The software is written in JavaScript and is compatible with most modern web browsers. It is available for free download on GitHub.  
+It is designed to help users manage their machine learning models in javascript based production enviroment. 
+It is available for free download on GitHub.  
 
 ## License
 This product is released under the MIT License. For more information, see the [LICENSE](./license.md) file.
