@@ -1,14 +1,16 @@
 {
   "name": "mlflow",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module",
+  "description": "JavaScript library for MLflow",
+  "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "mlflow",
+    "machine learning"
+  ],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "node-fetch": "^2.7.0"
-  }
+  "license": "MIT"
 }
