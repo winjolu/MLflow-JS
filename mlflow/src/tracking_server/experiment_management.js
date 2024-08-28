@@ -102,7 +102,7 @@ async function searchExperiment(
 // searchExperiment("name = 'test_experiment_postman'", 1);
 
 /**
- * Get metadata for an experiment. This method works on deleted experiments.
+ * Get metadata for an experiment, querying by experiment ID. This method works on deleted experiments.
  *
  * @param {string} experiment_id ID of the associated experiment.  (required)
  * @returns {Promise<Object>} Returns object containing the matched experiment.
@@ -117,7 +117,6 @@ async function getExperiment(experiment_id) {
     const response = await fetch(url, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
-      // body: JSON.stringify({ experiment_id }),
     });
 
     if (!response.ok) {
@@ -136,4 +135,43 @@ async function getExperiment(experiment_id) {
 }
 
 // run the next line to test ********************************************************************
-getExperiment('292357850348085316');
+// getExperiment('292357850348085316');
+
+
+/**
+ * Get metadata for an experiment, querying by experiment name.
+ * This endpoint will return deleted experiments, 
+ * but prefers the active experiment if an active and deleted experiment share the same name. 
+ * If multiple deleted experiments share the same name, the API will return one of them.
+ *
+ * @param {string} experiment_name ID of the associated experiment.  (required)
+ * @returns {Promise<Object>} Returns object containing the matched experiment.
+ */
+async function getExperimentByName (experiment_name) {
+  try {
+    if (!experiment_name) {
+      throw new Error('Experiment name is required');
+    }
+
+    const url = `${MLFLOW_TRACKING_URI}/experiments/get-by-name?experiment_name=${experiment_name}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json();
+      throw new Error(
+        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
+      );
+    }
+
+    const data = await response.json();
+    console.log('data.experiment: ', data.experiment);
+    return data.experiment;
+  } catch (error) {
+    console.error('Error getting experiment by name: ', error);
+  }
+}
+// run the next line to test ********************************************************************
+// getExperimentByName('test_experiment_postman16');
