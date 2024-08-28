@@ -257,3 +257,44 @@ async function restoreExperiment(experiment_id) {
 // restoreExperiment('977566317259111173');
 // getExperiment('977566317259111173');
 // deleteExperiment('977566317259111173');
+
+/**
+ * 
+ * @param {string} experiment_id ID of the associated experiment. (required)
+ * @param {string} new_name The experiment’s name is changed to the new name. The new name must be unique. (required)
+ * @returns {string} Returns a string i.e. "Experiment ID 99999 successfully updated"
+ */
+async function updateExperiment(experiment_id, new_name) {
+  try {
+    if (!experiment_id) {
+      throw new Error('Experiment ID is required');
+    }
+    if (!new_name) {
+      throw new Error('New name is required');
+    }
+
+    const url = `${MLFLOW_TRACKING_URI}/experiments/update`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ experiment_id, new_name }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json();
+      throw new Error(
+        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
+      );
+    }
+
+    console.log(`Experiment ID ${experiment_id} successfully updated - new name is ${new_name}`);    
+    return `Experiment ID ${experiment_id} successfully updated - new name is ${new_name}`;
+  } catch (error) {
+    console.error('Error updating experiment: ', error);
+  }
+}
+
+// run the next line to test ********************************************************************
+// getExperimentByName('test_experiment_postman15');
+// updateExperiment('668323101796317879', 'test_experiment_postman15');
+// getExperimentByName('test_experiment_postman15');
