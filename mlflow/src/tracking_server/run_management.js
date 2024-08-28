@@ -61,7 +61,7 @@ class RunManagement {
    * 
    * @param {string} run_id - ID of the run that the tag was logged under. Required
    * @param {string} key - Name of the tag. Maximum size is 255 bytes. Required
-   * @returns {Promise<Object} - Empty promise object
+   * @returns {Promise<Void>} - Empty promise object
    */
   async deleteTag (run_id, key) {
     if (!run_id) {
@@ -96,7 +96,7 @@ class RunManagement {
    * @param {string} run_id - ID of the run under which to log the param. Required
    * @param {string} key - Name of the param. Maximum size is 255 bytes. Required
    * @param {string} value  - String value of the param being logged. Maximum size is 6000 bytes. Required
-   * @returns {Promise<Object} - Empty promise object
+   * @returns {Promise<Void>} - Empty promise object
    * Note: A param can be logged only once for a run
    */
   async logParam (run_id, key, value) {
@@ -136,7 +136,7 @@ class RunManagement {
    * Backend servers may restrict the value of max_results depending on performance requirements. Requests that do not 
    * specify this value will behave as non-paginated queries where all metric history values for a given metric 
    * within a run are returned in a single response.
-   * @returns {Promise<Object} - The values for the specified metric, as a promise object
+   * @returns {Promise<Void>} - The values for the specified metric, as a promise object
    */
   async getMetricHistory(run_id, metric_key, page_token, max_results) {
     if (!run_id) {
@@ -244,7 +244,7 @@ class RunManagement {
   };
 }
 
-// let runManagement = new RunManagement(MLFLOW_TRACKING_URI, path);
+let runManagement = new RunManagement(MLFLOW_TRACKING_URI, path);
 // console.log(runManagement.listArtifacts('b3457c87f50440388da9d9ddabb1baaa', 'mlflow-artifacts:/784321942139901150/b3457c87f50440388da9d9ddabb1baaa/artifacts/iris_model'));
 // console.log(runManagement.listArtifacts('b3457c87f50440388da9d9ddabb1baaa'));
 // console.log(runManagement.searchRuns(['784321942139901150']));
@@ -253,3 +253,5 @@ class RunManagement {
 // console.log(runManagement.logParam('df87d99de65a42f5bc52d6f5774364b6','test2', '008'));
 // console.log(runManagement.setTag('df87d99de65a42f5bc52d6f5774364b6', 'testTag1', 'testTag1Val'))
 // console.log(runManagement.deleteTag('df87d99de65a42f5bc52d6f5774364b6', 'testTag1'))
+
+export { RunManagement };
