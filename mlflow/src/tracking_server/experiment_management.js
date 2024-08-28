@@ -3,7 +3,6 @@ const MLFLOW_TRACKING_URI = 'http://localhost:5001/api/2.0/mlflow';
 /**
  * Create an experiment with a name. Returns the ID of the newly created experiment.
  * Validates that another experiment with the same name does not already exist and fails if another experiment with the same name already exists.
- * Throws RESOURCE_ALREADY_EXISTS if a experiment with the given name exists.
  *
  * @param {string} name Experiment name.  (required)
  * @param {string} artifact_location Optional location where all artifacts for the experiment are stored.
@@ -259,6 +258,7 @@ async function restoreExperiment(experiment_id) {
 // deleteExperiment('977566317259111173');
 
 /**
+ * Update experiment name.
  * 
  * @param {string} experiment_id ID of the associated experiment. (required)
  * @param {string} new_name The experiment’s name is changed to the new name. The new name must be unique. (required)
@@ -297,4 +297,50 @@ async function updateExperiment(experiment_id, new_name) {
 // run the next line to test ********************************************************************
 // getExperimentByName('test_experiment_postman15');
 // updateExperiment('668323101796317879', 'test_experiment_postman15');
+// getExperimentByName('test_experiment_postman15');
+
+/**
+ * Set a tag on an experiment.
+ * 
+ * @param {string} experiment_id ID of the experiment under which to log the tag. (required)
+ * @param {string} key Name of the tag.  (required)
+ * @param {string} value String value of the tag being logged.  (required)
+ * @returns {string} Returns a string, i.e. `Set tag to experiment ID 99999 successfully`
+ */
+async function setExperimentTag(experiment_id, key, value) {
+  try {
+    if (!experiment_id) {
+      throw new Error('Experiment ID is required');
+    }
+    if (!key) {
+      throw new Error('Key is required');
+    }
+    if (!value) {
+      throw new Error('Value is required');
+    }
+
+    const url = `${MLFLOW_TRACKING_URI}/experiments/set-experiment-tag`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ experiment_id, key, value }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json();
+      throw new Error(
+        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
+      );
+    }
+
+    console.log(`Set tag to experiment ID ${experiment_id} successfully`);    
+    return `Set tag to experiment ID ${experiment_id} successfully`;
+  } catch (error) {
+    console.error('Error setting tag: ', error);
+  }
+}
+
+// run the next line to test ********************************************************************
+// getExperimentByName('test_experiment_postman15');
+// setExperimentTag('668323101796317879', 'test_tag', 'test_value_UPDATE');
 // getExperimentByName('test_experiment_postman15');
