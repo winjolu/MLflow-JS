@@ -99,7 +99,7 @@ async function searchExperiment(
 }
 
 // run the next line to test ********************************************************************
-// searchExperiment("name = 'test_experiment_postman'", 1);
+// searchExperiment("name = 'test_experiment_postman15'", 1);
 
 /**
  * Get metadata for an experiment, querying by experiment ID. This method works on deleted experiments.
@@ -135,19 +135,18 @@ async function getExperiment(experiment_id) {
 }
 
 // run the next line to test ********************************************************************
-// getExperiment('292357850348085316');
-
+// getExperiment('977566317259111173');
 
 /**
  * Get metadata for an experiment, querying by experiment name.
- * This endpoint will return deleted experiments, 
- * but prefers the active experiment if an active and deleted experiment share the same name. 
+ * This endpoint will return deleted experiments,
+ * but prefers the active experiment if an active and deleted experiment share the same name.
  * If multiple deleted experiments share the same name, the API will return one of them.
  *
  * @param {string} experiment_name ID of the associated experiment.  (required)
  * @returns {Promise<Object>} Returns object containing the matched experiment.
  */
-async function getExperimentByName (experiment_name) {
+async function getExperimentByName(experiment_name) {
   try {
     if (!experiment_name) {
       throw new Error('Experiment name is required');
@@ -175,3 +174,86 @@ async function getExperimentByName (experiment_name) {
 }
 // run the next line to test ********************************************************************
 // getExperimentByName('test_experiment_postman16');
+
+/**
+ * Mark an experiment for deletion.
+ * 
+ * @param {string} experiment_id ID of the associated experiment.  (required)
+ * @returns {string} Returns a string i.e. "Experiment ID 99999 successfully deleted"
+ */
+async function deleteExperiment(experiment_id) {
+  try {
+    if (!experiment_id) {
+      throw new Error('Experiment ID is required');
+    }
+
+    const url = `${MLFLOW_TRACKING_URI}/experiments/delete`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ experiment_id }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json();
+      throw new Error(
+        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
+      );
+    }
+
+    console.log(`Experiment ID ${experiment_id} successfully deleted`);
+    return `Experiment ID ${experiment_id} successfully deleted`;
+  } catch (error) {
+    console.error('Error deleting experiment: ', error);
+  }
+}
+
+// run the next line to test ********************************************************************
+// searchExperiment("name = 'SEARCH_AN_EXPERIMENT_NAME'", 1);
+// deleteExperiment('PASTE_EXPERIMENT_ID_HERE');
+// getExperiment('PASTE_EXPERIMENT_ID_HERE');
+
+/**
+ * Restore an experiment marked for deletion.
+ * 
+ * @param {string} experiment_id ID of the associated experiment.  (required)
+ * @returns {string} Returns a string i.e. "Experiment ID 99999 successfully restored"
+ */
+async function restoreExperiment(experiment_id) {
+  try {
+    if (!experiment_id) {
+      throw new Error('Experiment ID is required');
+    }
+
+    const url = `${MLFLOW_TRACKING_URI}/experiments/restore`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ experiment_id }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json();
+      throw new Error(
+        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
+      );
+    }
+
+    console.log(`Experiment ID ${experiment_id} successfully restored`);
+    return `Experiment ID ${experiment_id} successfully restored`;
+  } catch (error) {
+    console.error('Error restoring experiment: ', error);
+  }
+}
+
+// run the next line to test ********************************************************************
+// getExperimentByName('GET_AN_EXPERIMENT');
+// deleteExperiment('PASTE_EXPERIMENT_ID_HERE');
+// getExperiment('PASTE_EXPERIMENT_ID_HERE');
+// restoreExperiment('PASTE_EXPERIMENT_ID_HERE');
+// getExperiment('PASTE_EXPERIMENT_ID_HERE');
+
+// getExperimentByName('test_experiment_postman16');
+// restoreExperiment('977566317259111173');
+// getExperiment('977566317259111173');
+// deleteExperiment('977566317259111173');
