@@ -174,7 +174,6 @@ class RunManagement {
    * @returns {Promise<void>} - A promise that resolves when the metric is logged
    */
 
-  // wait for getMetricHistory!!!!
   async logMetric(run_id, key, value, timestamp = Date.now(), step = 0) {
     if (!run_id || !key || !value) {
       throw new Error('Run ID, key, value, timestamp are required.');
