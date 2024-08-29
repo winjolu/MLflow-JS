@@ -42,7 +42,7 @@ async function createExperiment(name, artifact_location = '', tags = []) {
 const testCreateExperiment = async () => {
   const log = await createExperiment('test_experiment_postman18');
   return console.log(log);
-}
+};
 // uncomment below ---
 // testCreateExperiment();
 
@@ -106,7 +106,7 @@ async function searchExperiment(
 const testSearchExperiment = async () => {
   const log = await searchExperiment("name = 'test_experiment_postman15'", 1);
   console.log(log);
-}
+};
 // uncomment below ---
 // testSearchExperiment();
 
@@ -147,7 +147,7 @@ async function getExperiment(experiment_id) {
 const testGetExperiment = async () => {
   const log = await getExperiment('977566317259111173');
   console.log(log);
-}
+};
 // uncomment below ---
 // testGetExperiment();
 
@@ -191,13 +191,13 @@ async function getExperimentByName(experiment_name) {
 const testGetExperimentByName = async () => {
   const log = await getExperimentByName('test_experiment_postman16');
   console.log(log);
-}
+};
 // uncomment below ---
 // testGetExperimentByName();
 
 /**
  * Mark an experiment for deletion.
- * 
+ *
  * @param {string} experiment_id ID of the associated experiment.  (required)
  * @returns {string} Returns a string i.e. "Experiment ID 99999 successfully deleted"
  */
@@ -235,13 +235,13 @@ const testDeleteExperiment = async () => {
   const log2 = await getExperiment('993400766971093020');
   console.log(log2);
   restoreExperiment('993400766971093020');
-}
+};
 // uncomment below ---
 // testDeleteExperiment();
 
 /**
  * Restore an experiment marked for deletion.
- * 
+ *
  * @param {string} experiment_id ID of the associated experiment.  (required)
  * @returns {string} Returns a string i.e. "Experiment ID 99999 successfully restored"
  */
@@ -284,13 +284,13 @@ const testRestoreExperiment = async () => {
   console.log(log3);
   const log4 = await getExperiment('977566317259111173');
   console.log(log4);
-}
+};
 // uncomment below ---
 // testRestoreExperiment();
 
 /**
  * Update experiment name.
- * 
+ *
  * @param {string} experiment_id ID of the associated experiment. (required)
  * @param {string} new_name The experiment’s name is changed to the new name. The new name must be unique. (required)
  * @returns {string} Returns a string i.e. "Experiment ID 99999 successfully updated"
@@ -333,18 +333,24 @@ async function updateExperiment(experiment_id, new_name) {
 const testUpdateExperiment = async () => {
   const log = await getExperiment('668323101796317879');
   console.log(log);
-  const log2 = await updateExperiment('668323101796317879', 'test_experiment_postman15_UPDATED_NAME');
+  const log2 = await updateExperiment(
+    '668323101796317879',
+    'test_experiment_postman15_UPDATED_NAME'
+  );
   console.log(log2);
   const log3 = await getExperiment('668323101796317879');
   console.log(log3);
-  const revert = await updateExperiment('668323101796317879', 'test_experiment_postman15');
+  const revert = await updateExperiment(
+    '668323101796317879',
+    'test_experiment_postman15'
+  );
 };
 // uncomment below ---
 // testUpdateExperiment();
 
 /**
  * Set a tag on an experiment.
- * 
+ *
  * @param {string} experiment_id ID of the experiment under which to log the tag. (required)
  * @param {string} key Name of the tag.  (required)
  * @param {string} value String value of the tag being logged.  (required)
@@ -388,7 +394,11 @@ const testSetExperimentTag = async () => {
   const log = await getExperiment('691149904576236192');
   console.log(log);
   console.log(log.experiment.tags);
-  const log2 = await setExperimentTag('691149904576236192', 'test_tag', 'test_value');
+  const log2 = await setExperimentTag(
+    '691149904576236192',
+    'test_tag',
+    'test_value'
+  );
   console.log(log2);
   const log3 = await getExperiment('691149904576236192');
   console.log(log3);
