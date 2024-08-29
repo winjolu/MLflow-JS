@@ -167,7 +167,7 @@ class ModelRegistry {
 
     // data is an empty object
     const data = await response.json();
-    // console.log('data: ', data);
+
     if (!response.ok) {
       throw new Error(
         `Error setting model alias: ${
@@ -203,7 +203,7 @@ class ModelRegistry {
 
     // data is an empty object
     const data = await response.json();
-    console.log('data: ', data);
+
     if (!response.ok) {
       throw new Error(
         `Error deleting model alias: ${
@@ -235,7 +235,7 @@ class ModelRegistry {
      * model_version
      */
     const data = await response.json();
-    // console.log('data: ', data);
+
     if (!response.ok) {
       throw new Error(
         `Error getting model version by alias: ${
@@ -246,11 +246,5 @@ class ModelRegistry {
     return data;
   }
 }
-
-
-let modelRegistry = new ModelRegistry(MLFLOW_TRACKING_URI);
-// console.log(modelRegistry.setRegisteredModelAlias('tracking-quickstart', 'aliasTest', '1'));
-// console.log(modelRegistry.deleteRegisteredModelAlias('tracking-quickstart', 'aliasTest'));
-// console.log(modelRegistry.getModelVersionByAlias('sk-learn-random-forest-reg-model', 'the_best_model_ever'));
 
 export { ModelRegistry };

@@ -1,17 +1,3 @@
-let domain = 'http://localhost:'
-const port = 5001;
-if (port) {
-  domain = domain + port;
-}
-
-const version = '2.0';
-
-const MLFLOW_TRACKING_URI = domain + '/api/' + version + '/mlflow';
-
-const path = 'artifacts';
-
-// Can initiate the comments above the function by doing /**, right above the function
-
 class RunManagement {
   constructor(trackingUri, path) {
     this.trackingUri = trackingUri;
@@ -46,7 +32,7 @@ class RunManagement {
 
     // data is an empty object
     const data = await response.json();
-    // console.log('data: ', data);
+
     if (!response.ok) {
       throw new Error(
         `Error logging param: ${
@@ -80,7 +66,7 @@ class RunManagement {
 
     // data is an empty object
     const data = await response.json();
-    // console.log('data: ', data);
+
     if (!response.ok) {
       throw new Error(
         `Error logging param: ${
@@ -160,7 +146,7 @@ class RunManagement {
         }`
       );
     }
-    // console.log('data: ', data);
+
     return data;
   }
 
@@ -207,8 +193,7 @@ class RunManagement {
         }`
       );
     }
-    // console.log('data: ', data);
-    // console.log('data.runs: ', data.runs);
+
     return data;
   }
 
@@ -239,19 +224,9 @@ class RunManagement {
         }`
       );
     }
-    console.log('data: ', data);
+
     return data;
   };
 }
-
-let runManagement = new RunManagement(MLFLOW_TRACKING_URI, path);
-// console.log(runManagement.listArtifacts('b3457c87f50440388da9d9ddabb1baaa', 'mlflow-artifacts:/784321942139901150/b3457c87f50440388da9d9ddabb1baaa/artifacts/iris_model'));
-// console.log(runManagement.listArtifacts('b3457c87f50440388da9d9ddabb1baaa'));
-// console.log(runManagement.searchRuns(['784321942139901150']));
-// console.log(runManagement.searchRuns());
-// console.log(runManagement.getMetricHistory('df87d99de65a42f5bc52d6f5774364b6'));
-// console.log(runManagement.logParam('df87d99de65a42f5bc52d6f5774364b6','test2', '008'));
-// console.log(runManagement.setTag('df87d99de65a42f5bc52d6f5774364b6', 'testTag1', 'testTag1Val'))
-// console.log(runManagement.deleteTag('df87d99de65a42f5bc52d6f5774364b6', 'testTag1'))
 
 export { RunManagement };
