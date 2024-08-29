@@ -31,15 +31,20 @@ async function createExperiment(name, artifact_location = '', tags = []) {
     }
 
     const data = await response.json();
-    console.log('data: ', data);
+    // console.log('return from createExperiment: ', data);
     return data;
   } catch (error) {
     console.error('Error creating experiment: ', error);
   }
 }
 
-// run the next line to test ********************************************************************
-// createExperiment('test_experiment_postman16');
+// test ****************************************************************************************************************************************
+const testCreateExperiment = async () => {
+  const log = await createExperiment('test_experiment_postman18');
+  return console.log(log);
+}
+// uncomment below ---
+// testCreateExperiment();
 
 /**
  * Search experiments.
@@ -90,15 +95,20 @@ async function searchExperiment(
     }
 
     const data = await response.json();
-    console.log('data: ', data);
+    // console.log('return from searchExperiment: ', data);
     return data;
   } catch (error) {
     console.error('Error searching for experiment: ', error);
   }
 }
 
-// run the next line to test ********************************************************************
-// searchExperiment("name = 'test_experiment_postman15'", 1);
+// test ****************************************************************************************************************************************
+const testSearchExperiment = async () => {
+  const log = await searchExperiment("name = 'test_experiment_postman15'", 1);
+  console.log(log);
+}
+// uncomment below ---
+// testSearchExperiment();
 
 /**
  * Get metadata for an experiment, querying by experiment ID. This method works on deleted experiments.
@@ -126,15 +136,20 @@ async function getExperiment(experiment_id) {
     }
 
     const data = await response.json();
-    console.log('data.experiment: ', data.experiment);
-    return data.experiment;
+    // console.log('return from getExperiment: ', data);
+    return data;
   } catch (error) {
     console.error('Error getting experiment: ', error);
   }
 }
 
-// run the next line to test ********************************************************************
-// getExperiment('977566317259111173');
+// test ****************************************************************************************************************************************
+const testGetExperiment = async () => {
+  const log = await getExperiment('977566317259111173');
+  console.log(log);
+}
+// uncomment below ---
+// testGetExperiment();
 
 /**
  * Get metadata for an experiment, querying by experiment name.
@@ -165,14 +180,20 @@ async function getExperimentByName(experiment_name) {
     }
 
     const data = await response.json();
-    console.log('data.experiment: ', data.experiment);
-    return data.experiment;
+    // console.log('return from getExperimentByName: ', data);
+    return data;
   } catch (error) {
     console.error('Error getting experiment by name: ', error);
   }
 }
-// run the next line to test ********************************************************************
+// test ****************************************************************************************************************************************
 // getExperimentByName('test_experiment_postman16');
+const testGetExperimentByName = async () => {
+  const log = await getExperimentByName('test_experiment_postman16');
+  console.log(log);
+}
+// uncomment below ---
+// testGetExperimentByName();
 
 /**
  * Mark an experiment for deletion.
@@ -200,17 +221,23 @@ async function deleteExperiment(experiment_id) {
       );
     }
 
-    console.log(`Experiment ID ${experiment_id} successfully deleted`);
+    // console.log(`Experiment ID ${experiment_id} successfully deleted`);
     return `Experiment ID ${experiment_id} successfully deleted`;
   } catch (error) {
     console.error('Error deleting experiment: ', error);
   }
 }
 
-// run the next line to test ********************************************************************
-// searchExperiment("name = 'SEARCH_AN_EXPERIMENT_NAME'", 1);
-// deleteExperiment('PASTE_EXPERIMENT_ID_HERE');
-// getExperiment('PASTE_EXPERIMENT_ID_HERE');
+// test ****************************************************************************************************************************************
+const testDeleteExperiment = async () => {
+  const log = await deleteExperiment('993400766971093020');
+  console.log(log);
+  const log2 = await getExperiment('993400766971093020');
+  console.log(log2);
+  restoreExperiment('993400766971093020');
+}
+// uncomment below ---
+// testDeleteExperiment();
 
 /**
  * Restore an experiment marked for deletion.
@@ -238,24 +265,28 @@ async function restoreExperiment(experiment_id) {
       );
     }
 
-    console.log(`Experiment ID ${experiment_id} successfully restored`);
+    // console.log(`Experiment ID ${experiment_id} successfully restored`);
     return `Experiment ID ${experiment_id} successfully restored`;
   } catch (error) {
     console.error('Error restoring experiment: ', error);
   }
 }
 
-// run the next line to test ********************************************************************
-// getExperimentByName('GET_AN_EXPERIMENT');
-// deleteExperiment('PASTE_EXPERIMENT_ID_HERE');
-// getExperiment('PASTE_EXPERIMENT_ID_HERE');
-// restoreExperiment('PASTE_EXPERIMENT_ID_HERE');
-// getExperiment('PASTE_EXPERIMENT_ID_HERE');
-
-// getExperimentByName('test_experiment_postman16');
-// restoreExperiment('977566317259111173');
-// getExperiment('977566317259111173');
-// deleteExperiment('977566317259111173');
+// test ****************************************************************************************************************************************
+const testRestoreExperiment = async () => {
+  const log = await getExperiment('977566317259111173');
+  console.log(log);
+  const deleted = await deleteExperiment('977566317259111173');
+  console.log(deleted);
+  const log2 = await getExperiment('977566317259111173');
+  console.log(log2);
+  const log3 = await restoreExperiment('977566317259111173');
+  console.log(log3);
+  const log4 = await getExperiment('977566317259111173');
+  console.log(log4);
+}
+// uncomment below ---
+// testRestoreExperiment();
 
 /**
  * Update experiment name.
@@ -287,17 +318,29 @@ async function updateExperiment(experiment_id, new_name) {
       );
     }
 
-    console.log(`Experiment ID ${experiment_id} successfully updated - new name is ${new_name}`);    
+    // console.log(`Experiment ID ${experiment_id} successfully updated - new name is ${new_name}`);
     return `Experiment ID ${experiment_id} successfully updated - new name is ${new_name}`;
   } catch (error) {
     console.error('Error updating experiment: ', error);
   }
 }
 
-// run the next line to test ********************************************************************
+// test ****************************************************************************************************************************************
 // getExperimentByName('test_experiment_postman15');
 // updateExperiment('668323101796317879', 'test_experiment_postman15');
 // getExperimentByName('test_experiment_postman15');
+
+const testUpdateExperiment = async () => {
+  const log = await getExperiment('668323101796317879');
+  console.log(log);
+  const log2 = await updateExperiment('668323101796317879', 'test_experiment_postman15_UPDATED_NAME');
+  console.log(log2);
+  const log3 = await getExperiment('668323101796317879');
+  console.log(log3);
+  const revert = await updateExperiment('668323101796317879', 'test_experiment_postman15');
+};
+// uncomment below ---
+// testUpdateExperiment();
 
 /**
  * Set a tag on an experiment.
@@ -333,14 +376,23 @@ async function setExperimentTag(experiment_id, key, value) {
       );
     }
 
-    console.log(`Set tag to experiment ID ${experiment_id} successfully`);    
+    // console.log(`Set tag to experiment ID ${experiment_id} successfully`);
     return `Set tag to experiment ID ${experiment_id} successfully`;
   } catch (error) {
     console.error('Error setting tag: ', error);
   }
 }
 
-// run the next line to test ********************************************************************
-// getExperimentByName('test_experiment_postman15');
-// setExperimentTag('668323101796317879', 'test_tag', 'test_value_UPDATE');
-// getExperimentByName('test_experiment_postman15');
+// test ****************************************************************************************************************************************
+const testSetExperimentTag = async () => {
+  const log = await getExperiment('691149904576236192');
+  console.log(log);
+  console.log(log.experiment.tags);
+  const log2 = await setExperimentTag('691149904576236192', 'test_tag', 'test_value');
+  console.log(log2);
+  const log3 = await getExperiment('691149904576236192');
+  console.log(log3);
+  console.log(log3.experiment.tags);
+};
+// uncomment below ---
+// testSetExperimentTag();
