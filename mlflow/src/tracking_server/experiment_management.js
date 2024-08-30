@@ -40,7 +40,7 @@ async function createExperiment(name, artifact_location = '', tags = []) {
 
 // test ****************************************************************************************************************************************
 const testCreateExperiment = async () => {
-  const log = await createExperiment('test_experiment_postman18');
+  const log = await createExperiment('test_experiment_postman20');
   return console.log(log);
 };
 // uncomment below ---
@@ -104,7 +104,7 @@ async function searchExperiment(
 
 // test ****************************************************************************************************************************************
 const testSearchExperiment = async () => {
-  const log = await searchExperiment("name = 'test_experiment_postman15'", 1);
+  const log = await searchExperiment("name LIKE 'test_%'", 1000);
   console.log(log);
 };
 // uncomment below ---
@@ -136,8 +136,8 @@ async function getExperiment(experiment_id) {
     }
 
     const data = await response.json();
-    // console.log('return from getExperiment: ', data);
-    return data;
+    // console.log('return from getExperiment: ', data.experiment);
+    return data.experiment;
   } catch (error) {
     console.error('Error getting experiment: ', error);
   }
@@ -180,8 +180,8 @@ async function getExperimentByName(experiment_name) {
     }
 
     const data = await response.json();
-    // console.log('return from getExperimentByName: ', data);
-    return data;
+    // console.log('return from getExperimentByName: ', data.experiment);
+    return data.experiment;
   } catch (error) {
     console.error('Error getting experiment by name: ', error);
   }
@@ -326,10 +326,6 @@ async function updateExperiment(experiment_id, new_name) {
 }
 
 // test ****************************************************************************************************************************************
-// getExperimentByName('test_experiment_postman15');
-// updateExperiment('668323101796317879', 'test_experiment_postman15');
-// getExperimentByName('test_experiment_postman15');
-
 const testUpdateExperiment = async () => {
   const log = await getExperiment('668323101796317879');
   console.log(log);
@@ -397,7 +393,7 @@ const testSetExperimentTag = async () => {
   const log2 = await setExperimentTag(
     '691149904576236192',
     'test_tag',
-    'test_value'
+    'test_value_LIVE_DEMO'
   );
   console.log(log2);
   const log3 = await getExperiment('691149904576236192');
