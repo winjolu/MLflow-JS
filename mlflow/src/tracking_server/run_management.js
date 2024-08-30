@@ -214,7 +214,7 @@ class RunManagement {
     const url = `${this.trackingUri}/api/2.0/mlflow/runs/log-batch`;
 
     const body = { run_id };
-    if (metrics) body.step = metrics;
+    if (metrics) body.metrics = metrics;
     if (params) body.params = params;
     if (tags) body.tags = tags;
 
