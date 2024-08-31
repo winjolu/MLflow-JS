@@ -11,36 +11,32 @@ const MLFLOW_TRACKING_URI = 'http://localhost:5001/api/2.0/mlflow';
  * @returns {Promise<Object>} Returns the ID of the newly created experiment in an object.
  */
 async function createExperiment(name, artifact_location = '', tags = []) {
-  try {
-    if (!name) {
-      throw new Error('Experiment name is required');
-    }
-
-    const url = `${MLFLOW_TRACKING_URI}/experiments/create`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, artifact_location, tags }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json();
-      throw new Error(
-        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
-      );
-    }
-
-    const data = await response.json();
-    // console.log('return from createExperiment: ', data);
-    return data;
-  } catch (error) {
-    console.error('Error creating experiment: ', error);
+  if (!name) {
+    throw new Error('Experiment name is required');
   }
+
+  const url = `${MLFLOW_TRACKING_URI}/experiments/create`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, artifact_location, tags }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json();
+    throw new Error(
+      `Error creating experiment from tracking server, status: ${response.status}.  ${errorBody.message}`
+    );
+  }
+
+  const data = await response.json();
+  // console.log('return from createExperiment: ', data);
+  return data;
 }
 
 // test ****************************************************************************************************************************************
 const testCreateExperiment = async () => {
-  const log = await createExperiment('test_experiment_postman18');
+  const log = await createExperiment('test_experiment_postman21');
   return console.log(log);
 };
 // uncomment below ---
@@ -66,45 +62,41 @@ async function searchExperiment(
   order_by = [],
   view_type = ''
 ) {
-  try {
-    if (!filter) {
-      throw new Error('Filter is required');
-    }
-    if (!max_results) {
-      throw new Error('Max results is required');
-    }
-
-    const url = `${MLFLOW_TRACKING_URI}/experiments/search`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        filter,
-        max_results,
-        page_token,
-        order_by,
-        view_type,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json();
-      throw new Error(
-        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
-      );
-    }
-
-    const data = await response.json();
-    // console.log('return from searchExperiment: ', data);
-    return data;
-  } catch (error) {
-    console.error('Error searching for experiment: ', error);
+  if (!filter) {
+    throw new Error('Filter is required');
   }
+  if (!max_results) {
+    throw new Error('Max results is required');
+  }
+
+  const url = `${MLFLOW_TRACKING_URI}/experiments/search`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      filter,
+      max_results,
+      page_token,
+      order_by,
+      view_type,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json();
+    throw new Error(
+      `Error searching for experiment from tracking server, status: ${response.status}.  ${errorBody.message}`
+    );
+  }
+
+  const data = await response.json();
+  // console.log('return from searchExperiment: ', data);
+  return data;
 }
 
 // test ****************************************************************************************************************************************
 const testSearchExperiment = async () => {
-  const log = await searchExperiment("name = 'test_experiment_postman15'", 1);
+  const log = await searchExperiment("name LIKE 'test_%'", 5);
   console.log(log);
 };
 // uncomment below ---
@@ -117,30 +109,26 @@ const testSearchExperiment = async () => {
  * @returns {Promise<Object>} Returns object containing the matched experiment.
  */
 async function getExperiment(experiment_id) {
-  try {
-    if (!experiment_id) {
-      throw new Error('Experiment ID is required');
-    }
-
-    const url = `${MLFLOW_TRACKING_URI}/experiments/get?experiment_id=${experiment_id}`;
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json();
-      throw new Error(
-        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
-      );
-    }
-
-    const data = await response.json();
-    // console.log('return from getExperiment: ', data);
-    return data;
-  } catch (error) {
-    console.error('Error getting experiment: ', error);
+  if (!experiment_id) {
+    throw new Error('Experiment ID is required');
   }
+
+  const url = `${MLFLOW_TRACKING_URI}/experiments/get?experiment_id=${experiment_id}`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json();
+    throw new Error(
+      `Error getting experiment from tracking server, status: ${response.status}.  ${errorBody.message}`
+    );
+  }
+
+  const data = await response.json();
+  // console.log('return from getExperiment: ', data.experiment);
+  return data.experiment;
 }
 
 // test ****************************************************************************************************************************************
@@ -161,30 +149,26 @@ const testGetExperiment = async () => {
  * @returns {Promise<Object>} Returns object containing the matched experiment.
  */
 async function getExperimentByName(experiment_name) {
-  try {
-    if (!experiment_name) {
-      throw new Error('Experiment name is required');
-    }
-
-    const url = `${MLFLOW_TRACKING_URI}/experiments/get-by-name?experiment_name=${experiment_name}`;
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json();
-      throw new Error(
-        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
-      );
-    }
-
-    const data = await response.json();
-    // console.log('return from getExperimentByName: ', data);
-    return data;
-  } catch (error) {
-    console.error('Error getting experiment by name: ', error);
+  if (!experiment_name) {
+    throw new Error('Experiment name is required');
   }
+
+  const url = `${MLFLOW_TRACKING_URI}/experiments/get-by-name?experiment_name=${experiment_name}`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json();
+    throw new Error(
+      `Error getting experiment by name from tracking server, status: ${response.status}.  ${errorBody.message}`
+    );
+  }
+
+  const data = await response.json();
+  // console.log('return from getExperimentByName: ', data.experiment);
+  return data.experiment;
 }
 // test ****************************************************************************************************************************************
 // getExperimentByName('test_experiment_postman16');
@@ -202,30 +186,26 @@ const testGetExperimentByName = async () => {
  * @returns {string} Returns a string i.e. "Experiment ID 99999 successfully deleted"
  */
 async function deleteExperiment(experiment_id) {
-  try {
-    if (!experiment_id) {
-      throw new Error('Experiment ID is required');
-    }
-
-    const url = `${MLFLOW_TRACKING_URI}/experiments/delete`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ experiment_id }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json();
-      throw new Error(
-        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
-      );
-    }
-
-    // console.log(`Experiment ID ${experiment_id} successfully deleted`);
-    return `Experiment ID ${experiment_id} successfully deleted`;
-  } catch (error) {
-    console.error('Error deleting experiment: ', error);
+  if (!experiment_id) {
+    throw new Error('Experiment ID is required');
   }
+
+  const url = `${MLFLOW_TRACKING_URI}/experiments/delete`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ experiment_id }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json();
+    throw new Error(
+      `Error deleting experiment from tracking server, status: ${response.status}.  ${errorBody.message}`
+    );
+  }
+
+  // console.log(`Experiment ID ${experiment_id} successfully deleted`);
+  return `Experiment ID ${experiment_id} successfully deleted`;
 }
 
 // test ****************************************************************************************************************************************
@@ -246,30 +226,26 @@ const testDeleteExperiment = async () => {
  * @returns {string} Returns a string i.e. "Experiment ID 99999 successfully restored"
  */
 async function restoreExperiment(experiment_id) {
-  try {
-    if (!experiment_id) {
-      throw new Error('Experiment ID is required');
-    }
-
-    const url = `${MLFLOW_TRACKING_URI}/experiments/restore`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ experiment_id }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json();
-      throw new Error(
-        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
-      );
-    }
-
-    // console.log(`Experiment ID ${experiment_id} successfully restored`);
-    return `Experiment ID ${experiment_id} successfully restored`;
-  } catch (error) {
-    console.error('Error restoring experiment: ', error);
+  if (!experiment_id) {
+    throw new Error('Experiment ID is required');
   }
+
+  const url = `${MLFLOW_TRACKING_URI}/experiments/restore`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ experiment_id }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json();
+    throw new Error(
+      `Error restoring experiment from tracking server, status: ${response.status}.  ${errorBody.message}`
+    );
+  }
+
+  // console.log(`Experiment ID ${experiment_id} successfully restored`);
+  return `Experiment ID ${experiment_id} successfully restored`;
 }
 
 // test ****************************************************************************************************************************************
@@ -296,40 +272,32 @@ const testRestoreExperiment = async () => {
  * @returns {string} Returns a string i.e. "Experiment ID 99999 successfully updated"
  */
 async function updateExperiment(experiment_id, new_name) {
-  try {
-    if (!experiment_id) {
-      throw new Error('Experiment ID is required');
-    }
-    if (!new_name) {
-      throw new Error('New name is required');
-    }
-
-    const url = `${MLFLOW_TRACKING_URI}/experiments/update`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ experiment_id, new_name }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json();
-      throw new Error(
-        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
-      );
-    }
-
-    // console.log(`Experiment ID ${experiment_id} successfully updated - new name is ${new_name}`);
-    return `Experiment ID ${experiment_id} successfully updated - new name is ${new_name}`;
-  } catch (error) {
-    console.error('Error updating experiment: ', error);
+  if (!experiment_id) {
+    throw new Error('Experiment ID is required');
   }
+  if (!new_name) {
+    throw new Error('New name is required');
+  }
+
+  const url = `${MLFLOW_TRACKING_URI}/experiments/update`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ experiment_id, new_name }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json();
+    throw new Error(
+      `Error updating experiment from tracking server, status: ${response.status}.  ${errorBody.message}`
+    );
+  }
+
+  // console.log(`Experiment ID ${experiment_id} successfully updated - new name is ${new_name}`);
+  return `Experiment ID ${experiment_id} successfully updated - new name is ${new_name}`;
 }
 
 // test ****************************************************************************************************************************************
-// getExperimentByName('test_experiment_postman15');
-// updateExperiment('668323101796317879', 'test_experiment_postman15');
-// getExperimentByName('test_experiment_postman15');
-
 const testUpdateExperiment = async () => {
   const log = await getExperiment('668323101796317879');
   console.log(log);
@@ -357,52 +325,48 @@ const testUpdateExperiment = async () => {
  * @returns {string} Returns a string, i.e. `Set tag to experiment ID 99999 successfully`
  */
 async function setExperimentTag(experiment_id, key, value) {
-  try {
-    if (!experiment_id) {
-      throw new Error('Experiment ID is required');
-    }
-    if (!key) {
-      throw new Error('Key is required');
-    }
-    if (!value) {
-      throw new Error('Value is required');
-    }
-
-    const url = `${MLFLOW_TRACKING_URI}/experiments/set-experiment-tag`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ experiment_id, key, value }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json();
-      throw new Error(
-        `HTTP error from tracking server, status: ${response.status}.  ${errorBody.message}`
-      );
-    }
-
-    // console.log(`Set tag to experiment ID ${experiment_id} successfully`);
-    return `Set tag to experiment ID ${experiment_id} successfully`;
-  } catch (error) {
-    console.error('Error setting tag: ', error);
+  if (!experiment_id) {
+    throw new Error('Experiment ID is required');
   }
+  if (!key) {
+    throw new Error('Key is required');
+  }
+  if (!value) {
+    throw new Error('Value is required');
+  }
+
+  const url = `${MLFLOW_TRACKING_URI}/experiments/set-experiment-tag`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ experiment_id, key, value }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json();
+    throw new Error(
+      `Error setting tag from tracking server, status: ${response.status}.  ${errorBody.message}`
+    );
+  }
+
+  // console.log(`Set tag to experiment ID ${experiment_id} successfully`);
+  return `Set tag to experiment ID ${experiment_id} successfully`;
 }
 
 // test ****************************************************************************************************************************************
 const testSetExperimentTag = async () => {
   const log = await getExperiment('691149904576236192');
   console.log(log);
-  console.log(log.experiment.tags);
+  console.log(log.tags);
   const log2 = await setExperimentTag(
     '691149904576236192',
     'test_tag',
-    'test_value'
+    'test_value_TEST'
   );
   console.log(log2);
   const log3 = await getExperiment('691149904576236192');
   console.log(log3);
-  console.log(log3.experiment.tags);
+  console.log(log3.tags);
 };
 // uncomment below ---
 // testSetExperimentTag();
