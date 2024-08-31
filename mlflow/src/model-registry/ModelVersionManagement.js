@@ -1,3 +1,4 @@
+const trackingUri = "http://127.0.0.1:5001"; // for manual testing only
 class ModelVersionManagement {
     constructor(trackingUri) {
       this.trackingUri = trackingUri;
