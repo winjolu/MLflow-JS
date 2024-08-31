@@ -15,20 +15,44 @@ class ModelVersionManagement {
      */
     async createModelVersion(modelName, source, runId = null) {
         // is model name provided?
+        if (!modelName) {
+            throw new Error('modelName is required');
+        }
 
         // is source provided?
+        if (!source) {
+            throw new Error('source is required');
+        }
 
         // construct url for create model version endpoint
+        const url = `${this.trackingUri}/api/2.0/mlflow/model-versions/create`;
 
         // build the request body with required and optional fields
-
+        const body = {
+            name: modelName,
+            source: source,
+            ...(runId && { run_id: runId }) //only include runId if truthy
+          };
+          
         // fire off a post request to create the model version
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
 
         // parse the response
+        const data = await response.json();
 
         // is response ok? else throw error
+        if (!response.ok) {
+            throw new Error(`Error creating model version: ${data.message || response.statusText}`);
+        }
 
         // return the model version obj 
+        return data.model_version;
     }
 
     /**
@@ -40,206 +64,228 @@ class ModelVersionManagement {
      */
     async getModelVersion(modelName, version) {
         // is model name provided?
+        if (!modelName) {
+            throw new Error('modelName is required');
+        }
 
         // is version provided?
+        if (!version) {
+            throw new Error('version is required');
+        }
 
         // construct url for get model version endpoint
+        const url = `${this.trackingUri}/api/2.0/mlflow/model-versions/get`;
 
         // build request query params
+        const params = new URLSearchParams({
+            name: modelName,
+            version: version
+        });
 
-        // fire off a get request to get the model version
-
+        // fire off a get request to fetch the model version
+        const response = await fetch(`${url}?${params}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        
         // parse the response 
+        const data = await response.json();
 
         // is response ok? else throw error
+        if (!response.ok) {
+            throw new Error(`Error fetching model version: ${data.message || response.statusText}`);
+        }   
 
         // return the model version obj
-
+        return data.model_version;
         
     }
   
+        /**
+     * updates a specific model version.
+     *
+     * @param {string} modelName - the name of the registered model (required)
+     * @param {string} version - the version number of the model to update (required)
+     * @param {Object} updates - the fields to update in the model version (required)
+     * @returns {Promise<Object>} - the updated model version object
+     */
+    async updateModelVersion(modelName, version, updates) {
+        // is model name provided?
+
+        // is version provided?
+
+        // are updates provided?
+
+        // construct url for update model version endpoint
+
+        // build the request body with update fields
+
+        // fire off a patch request to update the model version
+
+        // parse the response
+
+        // is response ok? else throw error
+
+        // return the updated model version obj
+    }
+
     /**
- * updates a specific model version.
- *
- * @param {string} modelName - the name of the registered model (required)
- * @param {string} version - the version number of the model to update (required)
- * @param {Object} updates - the fields to update in the model version (required)
- * @returns {Promise<Object>} - the updated model version object
- */
-async updateModelVersion(modelName, version, updates) {
-    // is model name provided?
+     * deletes a specific model version.
+     *
+     * @param {string} modelName - the name of the registered model (required)
+     * @param {string} version - the version number of the model to delete (required)
+     * @returns {Promise<void>} - a promise that resolves when the model version is deleted
+     */
+    async deleteModelVersion(modelName, version) {
+        // is model name provided?
 
-    // is version provided?
+        // is version provided?
 
-    // are updates provided?
+        // construct url for delete model version endpoint
 
-    // construct url for update model version endpoint
+        // build request query params
 
-    // build the request body with update fields
+        // fire off a delete request to remove the model version
 
-    // fire off a patch request to update the model version
+        // parse the response
 
-    // parse the response
+        // is response ok? else throw error
 
-    // is response ok? else throw error
+        // return nothing, just resolve
+    }
 
-    // return the updated model version obj
-}
+    /**
+     * searches for model versions based on provided filters.
+     *
+     * @param {string} [filter=''] - the filter criteria for searching model versions (optional)
+     * @param {number} [maxResults=100] - the maximum number of results to return (optional)
+     * @returns {Promise<Array>} - an array of model versions that match the search criteria
+     */
+    async searchModelVersions(filter = '', maxResults = 100) {
+        // construct url for search model versions endpoint
 
-/**
- * deletes a specific model version.
- *
- * @param {string} modelName - the name of the registered model (required)
- * @param {string} version - the version number of the model to delete (required)
- * @returns {Promise<void>} - a promise that resolves when the model version is deleted
- */
-async deleteModelVersion(modelName, version) {
-    // is model name provided?
+        // build request query params with filter and maxResults
 
-    // is version provided?
+        // fire off a get request to search for model versions
 
-    // construct url for delete model version endpoint
+        // parse the response
 
-    // build request query params
+        // is response ok? else throw error
 
-    // fire off a delete request to remove the model version
+        // return an array of model versions that match the criteria
+    }
 
-    // parse the response
+    /**
+     * retrieves the download uri for model version artifacts.
+     *
+     * @param {string} modelName - the name of the registered model (required)
+     * @param {string} version - the version number of the model to fetch the uri for (required)
+     * @returns {Promise<string>} - the uri for downloading the model version artifacts
+     */
+    async getDownloadUriForModelVersionArtifacts(modelName, version) {
+        // is model name provided?
 
-    // is response ok? else throw error
+        // is version provided?
 
-    // return nothing, just resolve
-}
+        // construct url for get download uri for model version artifacts endpoint
 
-/**
- * searches for model versions based on provided filters.
- *
- * @param {string} [filter=''] - the filter criteria for searching model versions (optional)
- * @param {number} [maxResults=100] - the maximum number of results to return (optional)
- * @returns {Promise<Array>} - an array of model versions that match the search criteria
- */
-async searchModelVersions(filter = '', maxResults = 100) {
-    // construct url for search model versions endpoint
+        // build request query params
 
-    // build request query params with filter and maxResults
+        // fire off a get request to fetch the download uri
 
-    // fire off a get request to search for model versions
+        // parse the response
 
-    // parse the response
+        // is response ok? else throw error
 
-    // is response ok? else throw error
+        // return the download uri as a string
+    }
 
-    // return an array of model versions that match the criteria
-}
+    /**
+     * transitions a model version to a different stage.
+     *
+     * @param {string} modelName - the name of the registered model (required)
+     * @param {string} version - the version number of the model to transition (required)
+     * @param {string} stage - the stage to transition the model version to (e.g., 'staging', 'production') (required)
+     * @returns {Promise<Object>} - the updated model version object after the stage transition
+     */
+    async transitionModelVersionStage(modelName, version, stage) {
+        // is model name provided?
 
-/**
- * retrieves the download uri for model version artifacts.
- *
- * @param {string} modelName - the name of the registered model (required)
- * @param {string} version - the version number of the model to fetch the uri for (required)
- * @returns {Promise<string>} - the uri for downloading the model version artifacts
- */
-async getDownloadUriForModelVersionArtifacts(modelName, version) {
-    // is model name provided?
+        // is version provided?
 
-    // is version provided?
+        // is stage provided?
 
-    // construct url for get download uri for model version artifacts endpoint
+        // construct url for transition model version stage endpoint
 
-    // build request query params
+        // build the request body with stage information
 
-    // fire off a get request to fetch the download uri
+        // fire off a post request to transition the model version stage
 
-    // parse the response
+        // parse the response
 
-    // is response ok? else throw error
+        // is response ok? else throw error
 
-    // return the download uri as a string
-}
+        // return the updated model version obj
+    }
 
-/**
- * transitions a model version to a different stage.
- *
- * @param {string} modelName - the name of the registered model (required)
- * @param {string} version - the version number of the model to transition (required)
- * @param {string} stage - the stage to transition the model version to (e.g., 'staging', 'production') (required)
- * @returns {Promise<Object>} - the updated model version object after the stage transition
- */
-async transitionModelVersionStage(modelName, version, stage) {
-    // is model name provided?
+    /**
+     * sets a tag on a specific model version.
+     *
+     * @param {string} modelName - the name of the registered model (required)
+     * @param {string} version - the version number of the model to tag (required)
+     * @param {string} key - the key of the tag (required)
+     * @param {string} value - the value of the tag (required)
+     * @returns {Promise<void>} - a promise that resolves when the tag is set
+     */
+    async setModelVersionTag(modelName, version, key, value) {
+        // is model name provided?
 
-    // is version provided?
+        // is version provided?
 
-    // is stage provided?
+        // is key provided?
 
-    // construct url for transition model version stage endpoint
+        // is value provided?
 
-    // build the request body with stage information
+        // construct url for set model version tag endpoint
 
-    // fire off a post request to transition the model version stage
+        // build the request body with tag key and value
 
-    // parse the response
+        // fire off a post request to set the tag on the model version
 
-    // is response ok? else throw error
+        // parse the response
 
-    // return the updated model version obj
-}
+        // is response ok? else throw error
 
-/**
- * sets a tag on a specific model version.
- *
- * @param {string} modelName - the name of the registered model (required)
- * @param {string} version - the version number of the model to tag (required)
- * @param {string} key - the key of the tag (required)
- * @param {string} value - the value of the tag (required)
- * @returns {Promise<void>} - a promise that resolves when the tag is set
- */
-async setModelVersionTag(modelName, version, key, value) {
-    // is model name provided?
+        // return nothing, just resolve
+    }
 
-    // is version provided?
+    /**
+     * deletes a tag from a specific model version.
+     *
+     * @param {string} modelName - the name of the registered model (required)
+     * @param {string} version - the version number of the model to untag (required)
+     * @param {string} key - the key of the tag to delete (required)
+     * @returns {Promise<void>} - a promise that resolves when the tag is deleted
+     */
+    async deleteModelVersionTag(modelName, version, key) {
+        // is model name provided?
 
-    // is key provided?
+        // is version provided?
 
-    // is value provided?
+        // is key provided?
 
-    // construct url for set model version tag endpoint
+        // construct url for delete model version tag endpoint
 
-    // build the request body with tag key and value
+        // build request query params
 
-    // fire off a post request to set the tag on the model version
+        // fire off a delete request to remove the tag from the model version
 
-    // parse the response
+        // parse the response
 
-    // is response ok? else throw error
+        // is response ok? else throw error
 
-    // return nothing, just resolve
-}
-
-/**
- * deletes a tag from a specific model version.
- *
- * @param {string} modelName - the name of the registered model (required)
- * @param {string} version - the version number of the model to untag (required)
- * @param {string} key - the key of the tag to delete (required)
- * @returns {Promise<void>} - a promise that resolves when the tag is deleted
- */
-async deleteModelVersionTag(modelName, version, key) {
-    // is model name provided?
-
-    // is version provided?
-
-    // is key provided?
-
-    // construct url for delete model version tag endpoint
-
-    // build request query params
-
-    // fire off a delete request to remove the tag from the model version
-
-    // parse the response
-
-    // is response ok? else throw error
-
-    // return nothing, just resolve
+        // return nothing, just resolve
+    }
 }
