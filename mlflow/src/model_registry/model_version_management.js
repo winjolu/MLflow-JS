@@ -113,22 +113,49 @@ class ModelVersionManagement {
      */
     async updateModelVersion(modelName, version, updates) {
         // is model name provided?
+        if (!modelName) {
+            throw new Error('modelName is required');
+        }
 
         // is version provided?
+        if (!version) {
+            throw new Error('version is required');
+        }
 
-        // are updates provided?
-
+        // are updates provided? is obj?
+        if (!updates || typeof updates !== 'object') {
+            throw new Error('updates object is required');
+        }
         // construct url for update model version endpoint
+        const url = `${this.trackingUri}/api/2.0/mlflow/model-versions/update`;;
 
         // build the request body with update fields
+        const body = {
+            name: modelName,
+            version: version,
+            ...updates //spread updates into body
+        };
 
         // fire off a patch request to update the model version
+        const response = await fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
 
         // parse the response
+        const data = await response.json();
 
         // is response ok? else throw error
+        if (!response.ok) {
+            throw new Error(`Error updating model version: ${data.message || response.statusText}`);
+        }
 
         // return the updated model version obj
+        return data.model_version;
     }
 
     /**
