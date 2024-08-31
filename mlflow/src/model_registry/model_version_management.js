@@ -1,5 +1,3 @@
-// model_version_management.js
-
 class ModelVersionManagement {
     constructor(trackingUri) {
       this.trackingUri = trackingUri;
@@ -31,8 +29,8 @@ class ModelVersionManagement {
         const body = {
             name: modelName,
             source: source,
-            ...(runId && { run_id: runId }) //only include runId if truthy
-          };
+            ...(runId && { run_id: runId }) // only include runId if truthy
+        };
           
         // fire off a post request to create the model version
         const response = await fetch(url, {
@@ -100,10 +98,9 @@ class ModelVersionManagement {
 
         // return the model version obj
         return data.model_version;
-        
     }
   
-        /**
+    /**
      * updates a specific model version.
      *
      * @param {string} modelName - the name of the registered model (required)
@@ -126,14 +123,15 @@ class ModelVersionManagement {
         if (!updates || typeof updates !== 'object') {
             throw new Error('updates object is required');
         }
+
         // construct url for update model version endpoint
-        const url = `${this.trackingUri}/api/2.0/mlflow/model-versions/update`;;
+        const url = `${this.trackingUri}/api/2.0/mlflow/model-versions/update`;
 
         // build the request body with update fields
         const body = {
             name: modelName,
             version: version,
-            ...updates //spread updates into body
+            ...updates // spread updates into body
         };
 
         // fire off a patch request to update the model version
@@ -144,7 +142,6 @@ class ModelVersionManagement {
             },
             body: JSON.stringify(body)
         });
-
 
         // parse the response
         const data = await response.json();
@@ -167,20 +164,41 @@ class ModelVersionManagement {
      */
     async deleteModelVersion(modelName, version) {
         // is model name provided?
-
+        if (!modelName) {
+            throw new Error('modelName is required');
+        }
         // is version provided?
+        if (!version) {
+            throw new Error('version is required');
+        }
 
         // construct url for delete model version endpoint
+        const url = `${this.trackingUri}/api/2.0/mlflow/model-versions/delete`;
 
         // build request query params
+        const params = new URLSearchParams({
+            name: modelName,
+            version: version
+        });
 
         // fire off a delete request to remove the model version
+        const response = await fetch(`${url}?${params}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
 
         // parse the response
+        const data = await response.json();
 
         // is response ok? else throw error
+        if (!response.ok) {
+            throw new Error(`Error deleting model version: ${data.message || response.statusText}`);
+        }
 
         // return nothing, just resolve
+        return;
     }
 
     /**
@@ -192,16 +210,32 @@ class ModelVersionManagement {
      */
     async searchModelVersions(filter = '', maxResults = 100) {
         // construct url for search model versions endpoint
+        const url = `${this.trackingUri}/api/2.0/mlflow/model-versions/search`;
 
         // build request query params with filter and maxResults
+        const params = new URLSearchParams({
+            filter: filter,
+            max_results: maxResults
+        });
 
         // fire off a get request to search for model versions
+        const response = await fetch(`${url}?${params}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
 
         // parse the response
+        const data = await response.json();
 
         // is response ok? else throw error
+        if (!response.ok) {
+            throw new Error(`Error searching model versions: ${data.message || response.statusText}`);
+        }
 
         // return an array of model versions that match the criteria
+        return data.model_versions;
     }
 
     /**
@@ -213,20 +247,42 @@ class ModelVersionManagement {
      */
     async getDownloadUriForModelVersionArtifacts(modelName, version) {
         // is model name provided?
+        if (!modelName) {
+            throw new Error('modelName is required');
+        }
 
         // is version provided?
+        if (!version) {
+            throw new Error('version is required');
+        }
 
         // construct url for get download uri for model version artifacts endpoint
+        const url = `${this.trackingUri}/api/2.0/mlflow/model-versions/get-download-uri`;
 
         // build request query params
+        const params = new URLSearchParams({
+            name: modelName,
+            version: version
+        });
 
         // fire off a get request to fetch the download uri
+        const response = await fetch(`${url}?${params}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
 
         // parse the response
+        const data = await response.json();
 
         // is response ok? else throw error
+        if (!response.ok) {
+            throw new Error(`Error fetching download uri: ${data.message || response.statusText}`);
+        }
 
         // return the download uri as a string
+        return data.artifact_uri;
     }
 
     /**
@@ -239,22 +295,49 @@ class ModelVersionManagement {
      */
     async transitionModelVersionStage(modelName, version, stage) {
         // is model name provided?
+        if (!modelName) {
+            throw new Error('modelName is required');
+        }
 
         // is version provided?
+        if (!version) {
+            throw new Error('version is required');
+        }
 
         // is stage provided?
+        if (!stage) {
+            throw new Error('stage is required');
+        }
 
         // construct url for transition model version stage endpoint
+        const url = `${this.trackingUri}/api/2.0/mlflow/model-versions/transition-stage`;
 
         // build the request body with stage information
+        const body = {
+            name: modelName,
+            version: version,
+            stage: stage
+        };
 
         // fire off a post request to transition the model version stage
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
 
         // parse the response
+        const data = await response.json();
 
         // is response ok? else throw error
+        if (!response.ok) {
+            throw new Error(`Error transitioning model version stage: ${data.message || response.statusText}`);
+        }
 
         // return the updated model version obj
+        return data.model_version;
     }
 
     /**
@@ -268,24 +351,55 @@ class ModelVersionManagement {
      */
     async setModelVersionTag(modelName, version, key, value) {
         // is model name provided?
+        if (!modelName) {
+            throw new Error('modelName is required');
+        }
 
         // is version provided?
+        if (!version) {
+            throw new Error('version is required');
+        }
 
         // is key provided?
+        if (!key) {
+            throw new Error('key is required');
+        }
 
         // is value provided?
+        if (!value) {
+            throw new Error('value is required');
+        }
 
         // construct url for set model version tag endpoint
+        const url = `${this.trackingUri}/api/2.0/mlflow/model-versions/set-tag`;
 
         // build the request body with tag key and value
+        const body = {
+            name: modelName,
+            version: version,
+            key: key,
+            value: value
+        };
 
         // fire off a post request to set the tag on the model version
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
 
         // parse the response
+        const data = await response.json();
 
         // is response ok? else throw error
+        if (!response.ok) {
+            throw new Error(`Error setting model version tag: ${data.message || response.statusText}`);
+        }
 
         // return nothing, just resolve
+        return;
     }
 
     /**
@@ -298,21 +412,49 @@ class ModelVersionManagement {
      */
     async deleteModelVersionTag(modelName, version, key) {
         // is model name provided?
+        if (!modelName) {
+            throw new Error('modelName is required');
+        }
 
         // is version provided?
+        if (!version) {
+            throw new Error('version is required');
+        }
 
         // is key provided?
+        if (!key) {
+            throw new Error('key is required');
+        }
 
         // construct url for delete model version tag endpoint
+        const url = `${this.trackingUri}/api/2.0/mlflow/model-versions/delete-tag`;
 
         // build request query params
+        const params = new URLSearchParams({
+            name: modelName,
+            version: version,
+            key: key
+        });
 
         // fire off a delete request to remove the tag from the model version
+        const response = await fetch(`${url}?${params}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
 
         // parse the response
+        const data = await response.json();
 
         // is response ok? else throw error
+        if (!response.ok) {
+            throw new Error(`Error deleting model version tag: ${data.message || response.statusText}`);
+        }
 
         // return nothing, just resolve
+        return;
     }
 }
+
+export { ModelVersionManagement };
