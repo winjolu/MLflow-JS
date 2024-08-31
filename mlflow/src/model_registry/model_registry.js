@@ -23,17 +23,17 @@ class ModelRegistry {
    * @param {string} [description=''] - Optional description for the model
    * @returns {Promise<Object>} The created registered model object
    */
-  async createRegisteredModel(name, tags = [], description = "") {
+  async createRegisteredModel(name, tags = [], description = '') {
     if (!name) {
-      throw new Error("Model name is required");
+      throw new Error('Model name is required');
     }
 
     const url = `${this.trackingUri}/api/2.0/mlflow/registered-models/create`;
 
     const response = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ name, tags, description }),
     });
@@ -57,18 +57,62 @@ class ModelRegistry {
    * @returns {Promise<Object>} The registered model object
    */
   async getRegisteredModel(name) {
-    // Implementation similar to createRegisteredModel
+    if (!name) {
+      throw new Error('Model name is required');
+    }
+
+    const url = `${
+      this.trackingUri
+    }/api/2.0/mlflow/registered-models/get?name=${encodeURIComponent(name)}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        `Error getting registered model: ${data.message || response.statusText}`
+      );
+    }
+
+    console.log(data);
+    console.log(data.registered_model);
+    return data.registered_model;
   }
 
   /**
    * Renames a registered model.
+   * Note: As of MLflow 2.15.1 renaming a model may cause it to lose its tags.
+   * If maintaining tags is crucial, consider re-applying them after renaming.
    *
    * @param {string} name - The current name of the registered model (required)
    * @param {string} newName - The new name for the registered model (required)
    * @returns {Promise<Object>} The updated registered model object
    */
   async renameRegisteredModel(name, newName) {
-    // Implementation
+    if (!name || !newName) {
+      throw new Error('Both current name and new name are required');
+    }
+
+    const url = `${this.trackingUri}/api/2.0/mlflow/registered-models/rename`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, new_name: newName }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        `Error renaming registered model: ${
+          data.message || response.statusText
+        }`
+      );
+    }
+    return data.registered_model;
   }
 
   /**
@@ -79,7 +123,30 @@ class ModelRegistry {
    * @returns {Promise<Object>} The updated registered model object
    */
   async updateRegisteredModel(name, description) {
-    // Implementation
+    if (!name) {
+      throw new Error('Model name is required');
+    }
+
+    const url = `${this.trackingUri}/api/2.0/mlflow/registered-models/update`;
+
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, description }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        `Error updating registered model: ${
+          data.message || response.statusText
+        }`
+      );
+    }
+    return data.registered_model;
   }
 
   /**
@@ -89,7 +156,28 @@ class ModelRegistry {
    * @returns {Promise<void>}
    */
   async deleteRegisteredModel(name) {
-    // Implementation
+    if (!name) {
+      throw new Error('Model name is required');
+    }
+
+    const url = `${this.trackingUri}/api/2.0/mlflow/registered-models/delete`;
+
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(
+        `Error deleting registered model: ${
+          data.message || response.statusText
+        }`
+      );
+    }
   }
 
   /**
@@ -100,7 +188,30 @@ class ModelRegistry {
    * @returns {Promise<Array<Object>>} The latest model version objects
    */
   async getLatestModelVersions(name, stages = []) {
-    // Implementation
+    if (!name) {
+      throw new Error('Model name is required');
+    }
+
+    const url = `${this.trackingUri}/api/2.0/mlflow/registered-models/get-latest-versions`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, stages }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        `Error getting latest model versions: ${
+          data.message || response.statusText
+        }`
+      );
+    }
+    return data.model_versions;
   }
 
   /**
@@ -113,7 +224,30 @@ class ModelRegistry {
    * @returns {Promise<Object>} Object containing matching models and next page token
    */
   async searchRegisteredModels(filter, maxResults, orderBy, pageToken) {
-    // Implementation
+    const params = new URLSearchParams();
+    if (filter) params.append('filter', filter);
+    if (maxResults) params.append('max_results', maxResults);
+    if (orderBy) params.append('order_by', orderBy.join(','));
+    if (pageToken) params.append('page_token', pageToken);
+
+    const url = `${
+      this.trackingUri
+    }/api/2.0/mlflow/registered-models/search?${params.toString()}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        `Error searching registered models: ${
+          data.message || response.statusText
+        }`
+      );
+    }
+    return {
+      registeredModels: data.registered_models,
+      nextPageToken: data.next_page_token,
+    };
   }
 
   /**
@@ -125,7 +259,28 @@ class ModelRegistry {
    * @returns {Promise<void>}
    */
   async setRegisteredModelTag(name, key, value) {
-    // Implementation
+    if (!name || !key || !value) {
+      throw new Error('Model name, tag key, and tag value are required');
+    }
+
+    const url = `${this.trackingUri}/api/2.0/mlflow/registered-models/set-tag`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, key, value }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(
+        `Error setting registered model tag: ${
+          data.message || response.statusText
+        }`
+      );
+    }
   }
 
   /**
@@ -136,7 +291,28 @@ class ModelRegistry {
    * @returns {Promise<void>}
    */
   async deleteRegisteredModelTag(name, key) {
-    // Implementation
+    if (!name || !key) {
+      throw new Error('Model name and tag key are required');
+    }
+
+    const url = `${this.trackingUri}/api/2.0/mlflow/registered-models/delete-tag`;
+
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, key }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(
+        `Error deleting registered model tag: ${
+          data.message || response.statusText
+        }`
+      );
+    }
   }
 
   /**
@@ -246,5 +422,4 @@ class ModelRegistry {
     return data;
   }
 }
-
 export { ModelRegistry };
