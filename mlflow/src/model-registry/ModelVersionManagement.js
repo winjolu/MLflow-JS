@@ -1,7 +1,8 @@
-const trackingUri = "http://127.0.0.1:5001"; // for manual testing only
+const trackingUri = "http://localhost:5001"; // MLflow server port
 class ModelVersionManagement {
     constructor(trackingUri) {
       this.trackingUri = trackingUri;
+      console.log(`trackingUri: ${this.trackingUri}`);
     }
   
     /**
@@ -30,7 +31,7 @@ class ModelVersionManagement {
         const body = {
             name: modelName,
             source: source,
-            ...(runId && { run_id: runId }) // only include runId if truthy
+            run_id: runId
         };
           
         // fire off a post request to create the model version
