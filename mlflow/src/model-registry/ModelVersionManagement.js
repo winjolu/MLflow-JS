@@ -53,7 +53,7 @@ class ModelVersionManagement {
             throw new Error(`Error creating model version: ${data.message || response.statusText}`);
         }
 
-        // return the model version obj 
+        // return the model version object 
         return data.model_version;
     }
 
