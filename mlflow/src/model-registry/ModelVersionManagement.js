@@ -11,7 +11,7 @@ class ModelVersionManagement {
      * @param {string} modelName - the name of the registered model (required)
      * @param {string} source - the source path where the model artifacts are stored (required)
      * @param {string} [runId=null] - the id of the run that generated this version (optional)
-     * @returns {Promise<Object>} - the created model version object
+     * @returns {Promise<Object>} - the created model version obj
      */
     async createModelVersion(modelName, source, runId = null) {
         // is model name provided?
